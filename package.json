@@ -1,16 +1,23 @@
 {
   "name": "chips-counter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "德州扑克筹码计数器 API",
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.34.1",
-  "devDependencies": {
-    "typescript": "^6.0.3"
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@koa/bodyparser": "^6.1.0",
+    "@koa/router": "^15.7.0",
+    "koa": "^3.2.1"
   }
 }
