@@ -1,0 +1,8 @@
+node_modules
+dist
+*.log
+.git
+doc
+test
+config.json
+README.md

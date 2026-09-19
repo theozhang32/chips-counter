@@ -1,0 +1,45 @@
+# 本地开发/测试环境：MySQL 5.7.44 + 服务（生产为微信云托管，见 doc/detailed-design.md §10 M8）
+# 用法：docker compose up -d mysql && pnpm dev
+services:
+  mysql:
+    image: mysql:5.7.44
+    platform: linux/amd64
+    container_name: chips-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: chipsroot
+      MYSQL_DATABASE: chips_counter
+      MYSQL_USER: chips
+      MYSQL_PASSWORD: chips
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION
+    ports:
+      - '33061:3306' # 宿主机 33061 → 容器 3306（避开本机可能已占用的 3306）
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-pchipsroot']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: chips
+      MYSQL_PASSWORD: chips
+      MYSQL_DATABASE: chips_counter
+      AUTH_TOKEN_SECRET: local-compose-secret
+      RETENTION_DAYS: 90
+    ports:
+      - '3000:3000'
+
+volumes:
+  mysql-data:
